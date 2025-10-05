@@ -1,5 +1,161 @@
 # Changelog
 
+## [2.0.0](https://github.com/mrhegit/openai-java/compare/v1.0.0...v2.0.0) (2025-10-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* **client:** change precision of some numeric types
+* **client:** extract auto pagination to shared classes
+
+### Features
+
+* add retryable exception ([41267b1](https://github.com/mrhegit/openai-java/commit/41267b183a0ae8491d88f0433f09a61db9bc92ce))
+* **api:** Add connectors support for MCP tool ([c078d37](https://github.com/mrhegit/openai-java/commit/c078d37c004d24bb579f1187fbdd97eeb81c5c6e))
+* **api:** Add gpt-realtime models ([cb2cbf1](https://github.com/mrhegit/openai-java/commit/cb2cbf15b89caf9f603beb9fb69d9d40aa665c0f))
+* **api:** add image sizes, reasoning encryption ([a4a7d53](https://github.com/mrhegit/openai-java/commit/a4a7d5390245ba11afe1cbd8665e0e39af3ca16f))
+* **api:** add new realtime and audio models, realtime session options ([898d2ad](https://github.com/mrhegit/openai-java/commit/898d2ad33f780e060dff902b755f3456ae0c12ed))
+* **api:** add new text parameters, expiration options ([b015df6](https://github.com/mrhegit/openai-java/commit/b015df6ce99f673ab6e9147128d53268d8805b65))
+* **api:** Add o3-pro model IDs ([48a685f](https://github.com/mrhegit/openai-java/commit/48a685f51f2db7499d9e47d6641b80acb14155a8))
+* **api:** add realtime data models ([d3a878c](https://github.com/mrhegit/openai-java/commit/d3a878c97bf01c49ad6539bf6f0a910bca3cf134))
+* **api:** Add reinforcement fine-tuning api support ([3a9fcbb](https://github.com/mrhegit/openai-java/commit/3a9fcbb2d47a6b106d963a4243c255d55123ff9c))
+* **api:** add reusable prompt IDs ([0767a2b](https://github.com/mrhegit/openai-java/commit/0767a2b50d853feff84748fed3eb6cf544bec6fb))
+* **api:** Add tools and structured outputs to evals ([f9d593c](https://github.com/mrhegit/openai-java/commit/f9d593c74e08686f28e99fe2b2cb033cc506e552))
+* **api:** add web search filters ([dc1e2d9](https://github.com/mrhegit/openai-java/commit/dc1e2d998239ea6fb80eed23fa5dc591a1c61c57))
+* **api:** adding gpt-4.1 family of model IDs ([2912dac](https://github.com/mrhegit/openai-java/commit/2912dacd8ff1d06ea61244ac531b40ed69332c4a))
+* **api:** adding new image model support ([e246362](https://github.com/mrhegit/openai-java/commit/e24636219f8282b8f5b18b326cea40ca62cd434d))
+* **api:** adding support for /v1/conversations to the API ([6a3cf33](https://github.com/mrhegit/openai-java/commit/6a3cf3377f132b216337f06afe5b003126cf2156))
+* **api:** adds GPT-5 and new API features: platform.openai.com/docs/guides/gpt-5 ([bd94a0b](https://github.com/mrhegit/openai-java/commit/bd94a0b86e359858c192ba60e983af876994d026))
+* **api:** Config update for pakrym-stream-param ([55ae767](https://github.com/mrhegit/openai-java/commit/55ae767021a1d03a2c8bc4184163acd56ee64d41))
+* **api:** further updates for evals API ([2b9d5bc](https://github.com/mrhegit/openai-java/commit/2b9d5bc92d4e67cfc5b48343bd999ccbe87ca2e7))
+* **api:** make model and inputs not required to create response ([87dd646](https://github.com/mrhegit/openai-java/commit/87dd64658da6cec7564f3b571e15ec0e2db0660b))
+* **api:** manual updates ([6c83caf](https://github.com/mrhegit/openai-java/commit/6c83caf19dd6bdb98d36e2010c6954fc67323488))
+* **api:** manual updates ([5e66153](https://github.com/mrhegit/openai-java/commit/5e6615368acc0639531e7e957a6264ac7a177b50))
+* **api:** manual updates ([84d1bf8](https://github.com/mrhegit/openai-java/commit/84d1bf834bd05a5935fd1f1da8edfd1b5ab1f0dc))
+* **api:** manual updates ([ec235f7](https://github.com/mrhegit/openai-java/commit/ec235f7f311ca1866ae8a05e9a622ab588062071))
+* **api:** manual updates ([005a643](https://github.com/mrhegit/openai-java/commit/005a6439977311990dca20e75783657e90aa3898))
+* **api:** new streaming helpers for background responses ([a82279d](https://github.com/mrhegit/openai-java/commit/a82279dfafef8a6a6276de104a5b58cffac63559))
+* **api:** realtime API updates ([ec8c4ae](https://github.com/mrhegit/openai-java/commit/ec8c4aecc9bf3d0d466d8e8142c2c7fc02532738))
+* **api:** remove deprecated endpoints from Java client ([7b5acb5](https://github.com/mrhegit/openai-java/commit/7b5acb54d52352521e86e7e0f6f878ca67a7b53e))
+* **api:** responses x eval api ([66327c5](https://github.com/mrhegit/openai-java/commit/66327c540652f63147158fc9ae8ffdd5e75cbca4))
+* **api:** ship the RealtimeGA API shape ([a662991](https://github.com/mrhegit/openai-java/commit/a662991e8fb4d7c785ec5f4da82de0e4dbdc5a6f))
+* **api:** update api shapes for usage and code interpreter ([c003f8d](https://github.com/mrhegit/openai-java/commit/c003f8d34388f2a78f60dd3daae63495650c3038))
+* **api:** Updating Assistants and Evals API schemas ([02c6df6](https://github.com/mrhegit/openai-java/commit/02c6df6457c3e03a8ae87d8b895a4838809947f3))
+* **api:** webhook and deep research support ([79859a1](https://github.com/mrhegit/openai-java/commit/79859a13346bceec6b6ebd9c32a984dcc0e7b2ed))
+* **client:** add `{QueryParams,Headers}#put(String, JsonValue)` methods ([8555a12](https://github.com/mrhegit/openai-java/commit/8555a12e504671329f217fae25430e009b35cba3))
+* **client:** allow configuring env via system properties ([82bb2c1](https://github.com/mrhegit/openai-java/commit/82bb2c1f9a83a995745d4d9b60f22cbcd53db560))
+* **client:** allow providing some params positionally ([1c6e875](https://github.com/mrhegit/openai-java/commit/1c6e8759bf7e6b8a7e3b245c5a2365edf2388fca))
+* **client:** ensure compat with proguard ([9082055](https://github.com/mrhegit/openai-java/commit/90820556db24bb5939ce156eb81e03d96c1f387c))
+* **client:** extract auto pagination to shared classes ([855d571](https://github.com/mrhegit/openai-java/commit/855d571da1cc772b31493f6a36032934772c3757))
+* **client:** implement per-endpoint base URL support ([c87f1af](https://github.com/mrhegit/openai-java/commit/c87f1af80b1f3d898a5a1553be48ee87ea4e7b4f))
+* **client:** make pagination robust to missing data ([32afc29](https://github.com/mrhegit/openai-java/commit/32afc29085a6f523dbdd986a3ea63d1b2d50b7d0))
+* **client:** support completions streaming structured outputs ([#528](https://github.com/mrhegit/openai-java/issues/528)) ([1102ead](https://github.com/mrhegit/openai-java/commit/1102eadbbdbe16b0a477c3f4a5466e47d0040470))
+* **client:** support new unified Azure URL scheme ([#554](https://github.com/mrhegit/openai-java/issues/554)) ([b98f533](https://github.com/mrhegit/openai-java/commit/b98f53376350f6a15f5efd2580e9fe7f0e59d789))
+* **client:** type safe structured outputs ([#463](https://github.com/mrhegit/openai-java/issues/463)) ([e123fdd](https://github.com/mrhegit/openai-java/commit/e123fdd3f75980b7edea84eaf6f6c101cb9a2ea2))
+
+
+### Bug Fixes
+
+* add missing `deploymentModel` params ([d9af1fb](https://github.com/mrhegit/openai-java/commit/d9af1fbe5309ae7da0522895596573fc36162387))
+* **api:** Fix evals and code interpreter interfaces ([d7e2747](https://github.com/mrhegit/openai-java/commit/d7e27475e917613beda0022725a1d9551ed2a278))
+* **ci:** release-doctor — report correct token name ([da7f492](https://github.com/mrhegit/openai-java/commit/da7f492db2a39a7c025e3320bcf79fda6a0702bd))
+* **ci:** use java-version 21 for publish step ([210f88c](https://github.com/mrhegit/openai-java/commit/210f88c7e24d1a8e19a76ce8b89ff66c0030d20b))
+* **client:** add missing deployment model param ([#704](https://github.com/mrhegit/openai-java/issues/704)) ([37aa563](https://github.com/mrhegit/openai-java/commit/37aa563789f34de917758519d859f17d9c1a98fc))
+* **client:** bump max requests per host to max requests (5 -&gt; 64) ([a36d9f6](https://github.com/mrhegit/openai-java/commit/a36d9f647dc82f8e39591179b87a128038ce7acb))
+* **client:** correctly send streaming discriminator param ([b27559f](https://github.com/mrhegit/openai-java/commit/b27559fa7d1c097ada40da12e55d1def372f5dce))
+* **client:** fix webhooks errors ([8051535](https://github.com/mrhegit/openai-java/commit/8051535acfe621614716bc874ae73c31df121b76))
+* **client:** incorrect `getPackageVersion` impl ([4123cf6](https://github.com/mrhegit/openai-java/commit/4123cf6af7ea1f29649c5755ad16a89a95e5d248))
+* **client:** optional image deployment model param ([a507f84](https://github.com/mrhegit/openai-java/commit/a507f8446a2270ee3e9c5e5295a9a57b59c633eb))
+* **client:** properly support srt and vtt in audio transcriptions. ([#472](https://github.com/mrhegit/openai-java/issues/472)) ([1e5bf3d](https://github.com/mrhegit/openai-java/commit/1e5bf3d36cb100d1b1ad8ac328b99cc50d16e4da))
+* **client:** remove `@MustBeClosed` for future returning methods ([2988157](https://github.com/mrhegit/openai-java/commit/2988157933dfe2ec7f9f2b626d0fa9eb184db27d))
+* **client:** return binary content from `get /containers/{container_id}/files/{file_id}/content` ([787e12b](https://github.com/mrhegit/openai-java/commit/787e12b4ac3d33f46aa31c165241c26f927e92dc))
+* **client:** update StructuredResponse with Prompt details ([a47219b](https://github.com/mrhegit/openai-java/commit/a47219b0247dcb4d25b3bf0f33ba6b392c61cd38))
+* **examples:** remove old examples ([8fe838c](https://github.com/mrhegit/openai-java/commit/8fe838cdade6fb04aba70ae82bab0e81d061ca43))
+* fix casing issue ([6912f4d](https://github.com/mrhegit/openai-java/commit/6912f4de48797826bb65c62e6b293fa70341bf46))
+* **functions:** add accidentally removed arguments method ([daa99cb](https://github.com/mrhegit/openai-java/commit/daa99cbc4409c344ce4540168115878d7a5c2210))
+* **internal:** add back addAssistantMessage ([ebf870e](https://github.com/mrhegit/openai-java/commit/ebf870eac969b9a3224623962eb79ebc404f432a))
+* **internal:** fix issues with new items in structured responses ([931f7b8](https://github.com/mrhegit/openai-java/commit/931f7b8ce3a83dfbbbd46d34bf99a66fa7e888e3))
+* **internal:** run formatter ([5757aa6](https://github.com/mrhegit/openai-java/commit/5757aa6af407d749a7bba6e1f0714eec850d4369))
+* merge conflict ([bf7e961](https://github.com/mrhegit/openai-java/commit/bf7e961819911f28f5ad0aaa03cda05ccfa5dbed))
+* missing validity ([301a38a](https://github.com/mrhegit/openai-java/commit/301a38adfa5782238e407f9ea22dd9635baa4e4b))
+* **tests:** fix file test ([a82adfd](https://github.com/mrhegit/openai-java/commit/a82adfd42bbb06da2c3c18f12cafd6b8ee38cc85))
+* **tests:** fix required prop in test ([e820c6f](https://github.com/mrhegit/openai-java/commit/e820c6f115ff392b567abb355f11ce5acfcab537))
+* update singularization rules ([a5f758f](https://github.com/mrhegit/openai-java/commit/a5f758fa77d5e78f065de5abce0341c6e4f6266f))
+
+
+### Performance Improvements
+
+* **internal:** make formatting faster ([49727c9](https://github.com/mrhegit/openai-java/commit/49727c988b884c404e3245f057d5b9f50813510b))
+
+
+### Chores
+
+* add deploymentModel ([f8f9dfc](https://github.com/mrhegit/openai-java/commit/f8f9dfc897e6640fa278a889be45c9c78854c5df))
+* add missing delegate methods ([666c0db](https://github.com/mrhegit/openai-java/commit/666c0db039cba28fd6dad4158dd1746d84b23d87))
+* **api:** accurately represent shape for verbosity on Chat Completions ([db819d5](https://github.com/mrhegit/openai-java/commit/db819d5fe08d19afcab3795f589931a29da35168))
+* **api:** docs and spec refactoring ([a3f76bd](https://github.com/mrhegit/openai-java/commit/a3f76bddd99c128638d4384b923559ab957581a2))
+* **api:** event shapes more accurate ([3a40fb2](https://github.com/mrhegit/openai-java/commit/3a40fb2e9d4bfcbb6ef63561c9e365d6dcc7e8be))
+* **api:** fix realtime GA types ([20d8f09](https://github.com/mrhegit/openai-java/commit/20d8f09a83a047b0e9860203ac80357101acbf93))
+* **api:** manual updates for ResponseInputAudio ([63a0cbd](https://github.com/mrhegit/openai-java/commit/63a0cbd36b03abd7162cfccc49204199249905ab))
+* **api:** Minor docs and type updates for realtime ([ba41aa3](https://github.com/mrhegit/openai-java/commit/ba41aa3766f7f4b9bcdeb3dd5c8bc9a953278054))
+* **api:** remove unsupported property ([2102d96](https://github.com/mrhegit/openai-java/commit/2102d962596fb31067aa85c88515c318448e42c0))
+* **api:** specification cleanup ([b5d76ac](https://github.com/mrhegit/openai-java/commit/b5d76ac465b7720f5e62b37722300b5a567eec00))
+* **api:** update realtime specs ([6ea922f](https://github.com/mrhegit/openai-java/commit/6ea922f75f36e74e0da8afa7189b563f9b0580cd))
+* **api:** update realtime specs, build config ([4d3fc52](https://github.com/mrhegit/openai-java/commit/4d3fc52cc60b4b706ce3b77f1c822cc21abe1b1c))
+* **ci:** add build job ([b4c700e](https://github.com/mrhegit/openai-java/commit/b4c700e7ac4656edf908746728334a17fb9719b1))
+* **ci:** add timeout thresholds for CI jobs ([7dbd0f5](https://github.com/mrhegit/openai-java/commit/7dbd0f5433bbcde8e3d4ed7ccbcc19519690a520))
+* **ci:** bump `actions/setup-java` to v4 ([c7abdb5](https://github.com/mrhegit/openai-java/commit/c7abdb58feb478db67eb001854d53535d53d1a38))
+* **ci:** enable for pull requests ([9c90b16](https://github.com/mrhegit/openai-java/commit/9c90b16585ebe3ffc031e0df598a27b5b6a85bb8))
+* **ci:** ensure docs generation always succeeds ([a81bc0b](https://github.com/mrhegit/openai-java/commit/a81bc0b16886cdc50616cae2d23b8246c45eccc8))
+* **ci:** reduce log noise ([5fecb39](https://github.com/mrhegit/openai-java/commit/5fecb397b592aa90a35ac7ea42a1e51d10fe8617))
+* **ci:** 禁用需要真实 API 密钥的 CI 示例任务 ([51af7c1](https://github.com/mrhegit/openai-java/commit/51af7c1851a1653b6636c9be0a3a4e10e6a7d06a))
+* **client:** refactor closing / shutdown ([d0657fb](https://github.com/mrhegit/openai-java/commit/d0657fb0be582524e0555279585263d06b6b2d81))
+* **client:** sync structured outputs features ([cb5c638](https://github.com/mrhegit/openai-java/commit/cb5c638863d56577e6bae9e0787b7fc4633428cb))
+* **docs:** grammar improvements ([13b0fbc](https://github.com/mrhegit/openai-java/commit/13b0fbc79ec365433ac33ccd7c5fef3e9b858fae))
+* **docs:** update README to include links to docs on Webhooks ([5698e53](https://github.com/mrhegit/openai-java/commit/5698e53e9f5666036eab58811bffc97e357d9dcb))
+* **example:** fix run example comment ([d9e9bb9](https://github.com/mrhegit/openai-java/commit/d9e9bb99dd2d6eddab37ff61b483fdc9448d72cd))
+* **fork:** 初始化 fork 配置并更新发布信息 ([c5b3457](https://github.com/mrhegit/openai-java/commit/c5b3457f63816e35b9c9e1a550d2b252bc7252fe))
+* improve formatter performance ([9cc0a6c](https://github.com/mrhegit/openai-java/commit/9cc0a6c47874f0f9ebefd1082095c758a8e9098e))
+* increase max gradle JVM heap to 8GB ([b95b355](https://github.com/mrhegit/openai-java/commit/b95b355147cbf0f05be7ac34bd9e13a9eda44b5a))
+* **internal:** add async lock helper ([0b9ea53](https://github.com/mrhegit/openai-java/commit/0b9ea53cff3d8d6b36e928f100a2cad6aa0868c2))
+* **internal:** codegen related update ([0af5d82](https://github.com/mrhegit/openai-java/commit/0af5d828114924e3a1d12ae6849e9e1baa1175b6))
+* **internal:** codegen related update ([3f4f710](https://github.com/mrhegit/openai-java/commit/3f4f710867efcabfa4ba27bd4d2b68c50d38eea4))
+* **internal:** codegen related update ([3597aee](https://github.com/mrhegit/openai-java/commit/3597aee95ae1956afbe8bd62b5a6946dd62256b3))
+* **internal:** dynamically determine included projects ([a20c37f](https://github.com/mrhegit/openai-java/commit/a20c37f017a0986a32d506a69acf812215569f34))
+* **internal:** fix custom code ([567c86e](https://github.com/mrhegit/openai-java/commit/567c86e958acf5898ee0be7547cfa0da34f07eb2))
+* **internal:** fix release workflows ([c66f725](https://github.com/mrhegit/openai-java/commit/c66f7258d8df4000b1013aa35140bef50de852fe))
+* **internal:** manual updates ([738f846](https://github.com/mrhegit/openai-java/commit/738f846254e9c5a920fc7fc4e1702bbf802c8a0c))
+* **internal:** minor formatting change ([f68c491](https://github.com/mrhegit/openai-java/commit/f68c491cb41e22a25d498b18919e8e7a657d753a))
+* **internal:** reduce CI branch coverage ([aa1b090](https://github.com/mrhegit/openai-java/commit/aa1b0905fbcad605a98acbed6be6ac3eb624b133))
+* **internal:** remove flaky `-Xbackend-threads=0` option ([1aec858](https://github.com/mrhegit/openai-java/commit/1aec858db61e87065fa5d3f7fba94f601f71b3ac))
+* **internal:** remove redundant deserializer symbols ([6f5a264](https://github.com/mrhegit/openai-java/commit/6f5a2645a598f439e0e6c937c4dbe76b3b9e2dd1))
+* **internal:** support passing arguments to test script ([98980ed](https://github.com/mrhegit/openai-java/commit/98980ed456de7c13dc49676351eab79b7ec58749))
+* **internal:** support running formatters directly ([4f66054](https://github.com/mrhegit/openai-java/commit/4f66054dfef2514ffa9323a4d7f2effd04f11423))
+* **internal:** update comment in script ([51def52](https://github.com/mrhegit/openai-java/commit/51def52771212d2d2ca894ed7eb681466a529473))
+* **internal:** update java toolchain ([eef415d](https://github.com/mrhegit/openai-java/commit/eef415d067c9dd6ac6d4b8c825f4d068a6c4a63c))
+* remove memory upper bound from publishing step ([07bf7aa](https://github.com/mrhegit/openai-java/commit/07bf7aa82c3c2bed84dd64a77872e13480b71a91))
+* run formatter ([426527b](https://github.com/mrhegit/openai-java/commit/426527b76371e7e0a66e368b0ddbb8da806fae2b))
+* run formatter ([426527b](https://github.com/mrhegit/openai-java/commit/426527b76371e7e0a66e368b0ddbb8da806fae2b))
+* run formatter ([899f79c](https://github.com/mrhegit/openai-java/commit/899f79c88b9a79ada33982af0d2ee64f96445230))
+
+
+### Documentation
+
+* add `ImageGenerationExample` ([#457](https://github.com/mrhegit/openai-java/issues/457)) ([286b7d5](https://github.com/mrhegit/openai-java/commit/286b7d52d8cb917130579352a89afd5f8c839894))
+* add batch processing examples ([#462](https://github.com/mrhegit/openai-java/issues/462)) ([#476](https://github.com/mrhegit/openai-java/issues/476)) ([d910267](https://github.com/mrhegit/openai-java/commit/d910267a97748ce1a193712da03011a65e21277c))
+* add file + completions example (closes [#483](https://github.com/mrhegit/openai-java/issues/483)) ([0b3756e](https://github.com/mrhegit/openai-java/commit/0b3756e0607f86c710bca9d407e15ffc7885b752))
+* add image editing examples (closes [#453](https://github.com/mrhegit/openai-java/issues/453)) ([d7758bc](https://github.com/mrhegit/openai-java/commit/d7758bc0d7bfac8f965804b1a78d4c50f89d0617))
+* **client:** update jackson compat error message ([675f813](https://github.com/mrhegit/openai-java/commit/675f813f9b3609a5efc0ba3e4451299561077fda))
+* more prominently call out examples ([6d370b9](https://github.com/mrhegit/openai-java/commit/6d370b949ce41de5cfe9bee6fb8c72152b4ba0f7))
+* multiple image editing ([641fdd0](https://github.com/mrhegit/openai-java/commit/641fdd009a8956c853252b808cded83eb8498a89))
+* remove or fix invalid readme examples ([fa9f7fc](https://github.com/mrhegit/openai-java/commit/fa9f7fc1e68b8754a50373c455cad45f59b9bda3))
+* update documentation links to be more uniform ([af5cd9c](https://github.com/mrhegit/openai-java/commit/af5cd9cf1ca1f1d8957f240c3c03df994407d901))
+
+
+### Refactors
+
+* **client:** change precision of some numeric types ([291b0f4](https://github.com/mrhegit/openai-java/commit/291b0f4ac12f61f31c40a80a46db2cffc9012a9a))
+
 ## 3.5.3 (2025-09-15)
 
 Full Changelog: [v3.5.2...v3.5.3](https://github.com/openai/openai-java/compare/v3.5.2...v3.5.3)
