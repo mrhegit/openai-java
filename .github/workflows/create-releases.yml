@@ -8,7 +8,10 @@ on:
 jobs:
   release:
     name: release
-    if: github.ref == 'refs/heads/custom-dev' && github.repository == 'mrhegit/openai-java'
+    # Disabled - manual release only
+    # To enable: change 'if: false' to the condition below
+    # if: github.ref == 'refs/heads/custom-dev' && github.repository == 'mrhegit/openai-java'
+    if: false
     runs-on: ubuntu-latest
     environment: publish
 
