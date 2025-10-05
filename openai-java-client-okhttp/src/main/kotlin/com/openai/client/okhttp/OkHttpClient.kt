@@ -219,11 +219,13 @@ class OkHttpClient private constructor(private val okHttpClient: okhttp3.OkHttpC
          * Sets a custom OkHttp Dispatcher for managing HTTP call execution.
          *
          * The Dispatcher controls the maximum number of concurrent requests and requests per host.
-         * If not set, a default optimized dispatcher will be created based on the machine's CPU cores.
+         * If not set, a default optimized dispatcher will be created based on the machine's CPU
+         * cores.
          *
          * **Important Notes:**
          * - The custom dispatcher will be used as-is. The SDK will NOT modify its configuration.
-         * - You should manually configure `maxRequests` and `maxRequestsPerHost` according to your needs.
+         * - You should manually configure `maxRequests` and `maxRequestsPerHost` according to your
+         *   needs.
          * - It's recommended to set `maxRequestsPerHost = maxRequests` for optimal performance when
          *   making requests to the same host (which is typical for OpenAI API calls).
          * - The dispatcher's lifecycle is managed by the OkHttpClient. When the client is closed,
@@ -244,9 +246,7 @@ class OkHttpClient private constructor(private val okHttpClient: okhttp3.OkHttpC
          * @param dispatcher The custom dispatcher to use, or null to use the optimized default
          * @see okhttp3.Dispatcher
          */
-        fun dispatcher(dispatcher: okhttp3.Dispatcher?) = apply {
-            this.dispatcher = dispatcher
-        }
+        fun dispatcher(dispatcher: okhttp3.Dispatcher?) = apply { this.dispatcher = dispatcher }
 
         /**
          * Creates an optimized Dispatcher with maxRequests calculated based on machine hardware.
@@ -256,8 +256,8 @@ class OkHttpClient private constructor(private val okHttpClient: okhttp3.OkHttpC
          * - CPU-based value: CPU cores * 8
          * - Final value: max(base value, CPU-based value)
          *
-         * This ensures good performance on both low-end and high-end machines while maintaining
-         * a reasonable minimum threshold.
+         * This ensures good performance on both low-end and high-end machines while maintaining a
+         * reasonable minimum threshold.
          */
         private fun createOptimizedDispatcher(): okhttp3.Dispatcher {
             val cpuCores = Runtime.getRuntime().availableProcessors()
@@ -273,29 +273,30 @@ class OkHttpClient private constructor(private val okHttpClient: okhttp3.OkHttpC
         }
 
         fun build(): OkHttpClient {
-            val okHttpClientBuilder = okhttp3.OkHttpClient.Builder()
-                .connectTimeout(timeout.connect())
-                .readTimeout(timeout.read())
-                .writeTimeout(timeout.write())
-                .callTimeout(timeout.request())
-                .proxy(proxy)
-                .apply {
-                    val sslSocketFactory = sslSocketFactory
-                    val trustManager = trustManager
-                    if (sslSocketFactory != null && trustManager != null) {
-                        sslSocketFactory(sslSocketFactory, trustManager)
-                    } else {
-                        check((sslSocketFactory != null) == (trustManager != null)) {
-                            "Both or none of `sslSocketFactory` and `trustManager` must be set, but only one was set"
+            val okHttpClientBuilder =
+                okhttp3.OkHttpClient.Builder()
+                    .connectTimeout(timeout.connect())
+                    .readTimeout(timeout.read())
+                    .writeTimeout(timeout.write())
+                    .callTimeout(timeout.request())
+                    .proxy(proxy)
+                    .apply {
+                        val sslSocketFactory = sslSocketFactory
+                        val trustManager = trustManager
+                        if (sslSocketFactory != null && trustManager != null) {
+                            sslSocketFactory(sslSocketFactory, trustManager)
+                        } else {
+                            check((sslSocketFactory != null) == (trustManager != null)) {
+                                "Both or none of `sslSocketFactory` and `trustManager` must be set, but only one was set"
+                            }
                         }
+
+                        hostnameVerifier?.let(::hostnameVerifier)
+
+                        // Use custom dispatcher if provided, otherwise create an optimized one
+                        val dispatcherToUse = dispatcher ?: createOptimizedDispatcher()
+                        dispatcher(dispatcherToUse)
                     }
-
-                    hostnameVerifier?.let(::hostnameVerifier)
-
-                    // Use custom dispatcher if provided, otherwise create an optimized one
-                    val dispatcherToUse = dispatcher ?: createOptimizedDispatcher()
-                    dispatcher(dispatcherToUse)
-                }
 
             return OkHttpClient(okHttpClientBuilder.build())
         }

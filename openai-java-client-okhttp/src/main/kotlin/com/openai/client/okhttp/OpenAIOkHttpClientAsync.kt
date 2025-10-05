@@ -110,11 +110,13 @@ class OpenAIOkHttpClientAsync private constructor() {
          * Sets a custom OkHttp Dispatcher for managing HTTP call execution.
          *
          * The Dispatcher controls the maximum number of concurrent requests and requests per host.
-         * If not set, a default optimized dispatcher will be created based on the machine's CPU cores.
+         * If not set, a default optimized dispatcher will be created based on the machine's CPU
+         * cores.
          *
          * **Important Notes:**
          * - The custom dispatcher will be used as-is. The SDK will NOT modify its configuration.
-         * - You should manually configure `maxRequests` and `maxRequestsPerHost` according to your needs.
+         * - You should manually configure `maxRequests` and `maxRequestsPerHost` according to your
+         *   needs.
          * - It's recommended to set `maxRequestsPerHost = maxRequests` for optimal performance when
          *   making requests to the same host (which is typical for OpenAI API calls).
          * - The dispatcher's lifecycle is managed by the OkHttpClient. When the client is closed,
@@ -136,9 +138,7 @@ class OpenAIOkHttpClientAsync private constructor() {
          * @param dispatcher The custom dispatcher to use, or null to use the optimized default
          * @see okhttp3.Dispatcher
          */
-        fun dispatcher(dispatcher: okhttp3.Dispatcher?) = apply {
-            this.dispatcher = dispatcher
-        }
+        fun dispatcher(dispatcher: okhttp3.Dispatcher?) = apply { this.dispatcher = dispatcher }
 
         /** Alias for calling [Builder.dispatcher] with `dispatcher.orElse(null)`. */
         fun dispatcher(dispatcher: Optional<okhttp3.Dispatcher>) =
