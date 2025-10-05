@@ -9,7 +9,7 @@ on:
 jobs:
   release:
     name: release
-    if: github.ref == 'refs/heads/main' && github.repository == 'openai/openai-java'
+    if: github.ref == 'refs/heads/main' && github.repository == 'mrhegit/openai-java'
     runs-on: ubuntu-latest
     environment: publish
 

@@ -7,8 +7,8 @@ repositories {
 }
 
 allprojects {
-    group = "com.openai"
-    version = "3.5.3" // x-release-please-version
+    group = "io.github.mrhegit"
+    version = "1.0.0" // x-release-please-version
 }
 
 subprojects {

@@ -29,27 +29,30 @@ configure<MavenPublishBaseExtension> {
     )
 
     pom {
-        name.set("OpenAI API")
-        description.set("The OpenAI REST API. Please see https://platform.openai.com/docs/api-reference\nfor more details.")
-        url.set("https://platform.openai.com/docs")
+        name.set("OpenAI Java SDK (Fork by mrhegit)")
+        description.set("Forked version of the OpenAI Java SDK with custom enhancements. Based on official openai-java v3.5.3. Please see https://platform.openai.com/docs/api-reference for API details.")
+        url.set("https://github.com/mrhegit/openai-java")
 
         licenses {
             license {
                 name.set("Apache-2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
             }
         }
 
         developers {
             developer {
-                name.set("OpenAI")
-                email.set("support@openai.com")
+                id.set("mrhegit")
+                name.set("mrhegit")
+                email.set("drivemrhe@gmail.com")
+                url.set("https://github.com/mrhegit")
             }
         }
 
         scm {
-            connection.set("scm:git:git://github.com/openai/openai-java.git")
-            developerConnection.set("scm:git:git://github.com/openai/openai-java.git")
-            url.set("https://github.com/openai/openai-java")
+            connection.set("scm:git:git://github.com/mrhegit/openai-java.git")
+            developerConnection.set("scm:git:ssh://git@github.com/mrhegit/openai-java.git")
+            url.set("https://github.com/mrhegit/openai-java")
         }
     }
 }
