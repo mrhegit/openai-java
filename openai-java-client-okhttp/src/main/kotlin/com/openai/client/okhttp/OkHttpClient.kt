@@ -196,6 +196,7 @@ class OkHttpClient private constructor(private val okHttpClient: okhttp3.OkHttpC
         private var trustManager: X509TrustManager? = null
         private var hostnameVerifier: HostnameVerifier? = null
         private var dispatcher: okhttp3.Dispatcher? = null
+        private var connectionPool: okhttp3.ConnectionPool? = null
 
         fun timeout(timeout: Timeout) = apply { this.timeout = timeout }
 
@@ -249,6 +250,45 @@ class OkHttpClient private constructor(private val okHttpClient: okhttp3.OkHttpC
         fun dispatcher(dispatcher: okhttp3.Dispatcher?) = apply { this.dispatcher = dispatcher }
 
         /**
+         * Sets a custom OkHttp ConnectionPool for managing HTTP connection reuse.
+         *
+         * The ConnectionPool controls connection pooling behavior, including the maximum number of
+         * idle connections and how long they are kept alive. If not set, a default optimized
+         * connection pool will be created based on the machine's CPU cores.
+         *
+         * **Important Notes:**
+         * - The custom connection pool will be used as-is. The SDK will NOT modify its
+         *   configuration.
+         * - You should manually configure `maxIdleConnections` and `keepAliveDuration` according to
+         *   your needs.
+         * - Recommended settings for OpenAI API:
+         *     - `maxIdleConnections`: 5-50 (based on expected concurrent usage)
+         *     - `keepAliveDuration`: 5 minutes (standard HTTP keep-alive duration)
+         * - The connection pool's lifecycle is managed by the OkHttpClient. When the client is
+         *   closed, all connections will be evicted.
+         * - Do not share the same ConnectionPool instance across multiple OkHttpClient instances.
+         *
+         * Example:
+         * ```kotlin
+         * val customConnectionPool = okhttp3.ConnectionPool(
+         *     maxIdleConnections = 20,
+         *     keepAliveDuration = 5,
+         *     timeUnit = TimeUnit.MINUTES
+         * )
+         * val client = OkHttpClient.builder()
+         *     .connectionPool(customConnectionPool)
+         *     .build()
+         * ```
+         *
+         * @param connectionPool The custom connection pool to use, or null to use the optimized
+         *   default
+         * @see okhttp3.ConnectionPool
+         */
+        fun connectionPool(connectionPool: okhttp3.ConnectionPool?) = apply {
+            this.connectionPool = connectionPool
+        }
+
+        /**
          * Creates an optimized Dispatcher with maxRequests calculated based on machine hardware.
          *
          * The calculation logic:
@@ -270,6 +310,31 @@ class OkHttpClient private constructor(private val okHttpClient: okhttp3.OkHttpC
                 // raise the per-host limit to match the overall limit.
                 this.maxRequestsPerHost = maxRequests
             }
+        }
+
+        /**
+         * Creates an optimized ConnectionPool with maxIdleConnections calculated based on machine
+         * hardware.
+         *
+         * The calculation logic:
+         * - Base value: 5 (reasonable default for most scenarios)
+         * - CPU-based value: CPU cores * 2
+         * - Final value: max(base value, CPU-based value)
+         * - Keep-alive duration: 5 minutes (standard HTTP keep-alive)
+         *
+         * This ensures efficient connection reuse on both low-end and high-end machines while
+         * maintaining a reasonable minimum threshold.
+         */
+        private fun createOptimizedConnectionPool(): okhttp3.ConnectionPool {
+            val cpuCores = Runtime.getRuntime().availableProcessors()
+            val baselineMaxIdleConnections = 5
+            val maxIdleConnections = maxOf(baselineMaxIdleConnections, cpuCores * 2)
+
+            return okhttp3.ConnectionPool(
+                maxIdleConnections,
+                5,
+                java.util.concurrent.TimeUnit.MINUTES,
+            )
         }
 
         fun build(): OkHttpClient {
@@ -296,6 +361,10 @@ class OkHttpClient private constructor(private val okHttpClient: okhttp3.OkHttpC
                         // Use custom dispatcher if provided, otherwise create an optimized one
                         val dispatcherToUse = dispatcher ?: createOptimizedDispatcher()
                         dispatcher(dispatcherToUse)
+
+                        // Use custom connection pool if provided, otherwise create an optimized one
+                        val connectionPoolToUse = connectionPool ?: createOptimizedConnectionPool()
+                        connectionPool(connectionPoolToUse)
                     }
 
             return OkHttpClient(okHttpClientBuilder.build())

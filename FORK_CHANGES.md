@@ -525,6 +525,7 @@ git push origin main
 ✅ README 和 CONTRIBUTING 安装说明已更新
 ✅ release-please 版本清单已同步
 ✅ 新增自定义 OkHttp Dispatcher 配置功能（3 个文件）
+✅ 新增自定义 OkHttp ConnectionPool 配置功能（3 个文件）
 
 **下一步：** 配置 GitHub Secrets 并按照 `MANUAL_RELEASE_GUIDE.md` 进行手动发布
 
@@ -651,6 +652,174 @@ fun dispatcher(dispatcher: Optional<okhttp3.Dispatcher>) =
 - 明确说明 SDK 不会修改自定义 Dispatcher 的配置
 - 提供完整的使用示例和最佳实践建议
 - 说明生命周期管理和使用限制
+
+---
+
+### 17. 支持自定义 OkHttp ConnectionPool 配置
+
+**修改日期：** 2025-10-05
+
+**修改文件：**
+- `openai-java-client-okhttp/src/main/kotlin/com/openai/client/okhttp/OkHttpClient.kt`
+- `openai-java-client-okhttp/src/main/kotlin/com/openai/client/okhttp/OpenAIOkHttpClient.kt`
+- `openai-java-client-okhttp/src/main/kotlin/com/openai/client/okhttp/OpenAIOkHttpClientAsync.kt`
+
+**功能描述：**
+
+新增了 `connectionPool()` 方法，允许用户自定义 OkHttp ConnectionPool 配置，以优化 HTTP 连接复用和管理。
+
+**核心特性：**
+
+1. **自定义 ConnectionPool 支持**
+   - 用户可以传入自定义的 `okhttp3.ConnectionPool` 对象
+   - SDK 会原样使用自定义 ConnectionPool，不会修改其任何配置
+   - 用户需要手动配置 `maxIdleConnections` 和 `keepAliveDuration` 参数
+
+2. **智能默认 ConnectionPool**
+   - 当用户未提供自定义 ConnectionPool 时，SDK 自动创建优化的默认配置
+   - 基于机器 CPU 核心数动态计算 `maxIdleConnections` 参数
+   - 计算逻辑：`maxIdleConnections = max(5, CPU核心数 × 2)`
+   - `keepAliveDuration` 默认为 5 分钟（符合 HTTP keep-alive 标准）
+
+3. **向后兼容性**
+   - 这是可选功能，不会破坏现有 API
+   - 未提供自定义 ConnectionPool 时，自动使用优化的默认配置
+   - 现有代码无需任何修改即可享受优化的连接池配置
+
+**使用示例：**
+
+1. **使用默认优化的 ConnectionPool（推荐）：**
+
+```kotlin
+val client = OpenAIOkHttpClient.builder()
+    .apiKey("your-api-key")
+    .build()
+
+// 自动使用优化的 ConnectionPool：
+// - maxIdleConnections = max(5, CPU核心数 × 2)
+// - keepAliveDuration = 5 分钟
+```
+
+2. **使用自定义 ConnectionPool：**
+
+```kotlin
+import java.util.concurrent.TimeUnit
+
+val customConnectionPool = okhttp3.ConnectionPool(
+    maxIdleConnections = 20,
+    keepAliveDuration = 5,
+    timeUnit = TimeUnit.MINUTES
+)
+
+val client = OpenAIOkHttpClient.builder()
+    .apiKey("your-api-key")
+    .connectionPool(customConnectionPool)
+    .build()
+```
+
+3. **异步客户端使用方式：**
+
+```kotlin
+val client = OpenAIOkHttpClientAsync.builder()
+    .apiKey("your-api-key")
+    .connectionPool(customConnectionPool)
+    .build()
+```
+
+**重要说明：**
+
+⚠️ **自定义 ConnectionPool 注意事项：**
+
+1. **SDK 行为**：自定义 ConnectionPool 会被原样使用，SDK 不会修改其配置
+2. **用户责任**：需要手动配置 `maxIdleConnections` 和 `keepAliveDuration` 参数
+3. **推荐配置**：
+   - `maxIdleConnections`: 5-50（基于预期并发使用量）
+   - `keepAliveDuration`: 5 分钟（标准 HTTP keep-alive 时长）
+4. **生命周期管理**：ConnectionPool 的生命周期由 OkHttpClient 管理，当调用 `close()` 时会自动清理所有连接
+5. **使用限制**：不要在多个 OkHttpClient 实例间共享同一个 ConnectionPool 对象
+
+📊 **性能优化效果：**
+
+不同 CPU 核心数下的默认 `maxIdleConnections` 值：
+
+| CPU 核心数 | maxIdleConnections | 说明 |
+|-----------|--------------------|------|
+| 2 核      | 5                  | 使用基准值 |
+| 4 核      | 8                  | CPU核心数 × 2 |
+| 8 核      | 16                 | CPU核心数 × 2 |
+| 16 核     | 32                 | CPU核心数 × 2 |
+| 32 核     | 64                 | CPU核心数 × 2 |
+
+**技术实现：**
+
+1. **OkHttpClient.Builder 实现：**
+
+```kotlin
+class Builder internal constructor() {
+    private var connectionPool: okhttp3.ConnectionPool? = null
+
+    fun connectionPool(connectionPool: okhttp3.ConnectionPool?) = apply {
+        this.connectionPool = connectionPool
+    }
+
+    private fun createOptimizedConnectionPool(): okhttp3.ConnectionPool {
+        val cpuCores = Runtime.getRuntime().availableProcessors()
+        val baselineMaxIdleConnections = 5
+        val maxIdleConnections = maxOf(baselineMaxIdleConnections, cpuCores * 2)
+
+        return okhttp3.ConnectionPool(
+            maxIdleConnections,
+            5,
+            java.util.concurrent.TimeUnit.MINUTES
+        )
+    }
+
+    fun build(): OkHttpClient {
+        val okHttpClientBuilder = okhttp3.OkHttpClient.Builder()
+            .apply {
+                // Use custom connection pool if provided, otherwise create an optimized one
+                val connectionPoolToUse = connectionPool ?: createOptimizedConnectionPool()
+                connectionPool(connectionPoolToUse)
+            }
+        return OkHttpClient(okHttpClientBuilder.build())
+    }
+}
+```
+
+2. **OpenAIOkHttpClient.Builder 和 OpenAIOkHttpClientAsync.Builder 实现：**
+
+```kotlin
+class Builder internal constructor() {
+    private var connectionPool: okhttp3.ConnectionPool? = null
+
+    fun connectionPool(connectionPool: okhttp3.ConnectionPool?) = apply {
+        this.connectionPool = connectionPool
+    }
+
+    fun connectionPool(connectionPool: Optional<okhttp3.ConnectionPool>) =
+        connectionPool(connectionPool.getOrNull())
+
+    fun build(): OpenAIClient {
+        return OpenAIClientImpl(
+            clientOptions
+                .httpClient(
+                    OkHttpClient.builder()
+                        .connectionPool(connectionPool)
+                        .build()
+                )
+                .build()
+        )
+    }
+}
+```
+
+**文档完善：**
+
+- 所有 `connectionPool()` 方法都包含详细的 KDoc 注释
+- 明确说明 SDK 不会修改自定义 ConnectionPool 的配置
+- 提供完整的使用示例和推荐配置参数
+- 说明生命周期管理和使用限制
+- 包含性能优化效果的详细数据
 
 ---
 

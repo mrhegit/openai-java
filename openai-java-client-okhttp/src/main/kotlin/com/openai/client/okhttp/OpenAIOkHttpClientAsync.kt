@@ -52,6 +52,7 @@ class OpenAIOkHttpClientAsync private constructor() {
         private var trustManager: X509TrustManager? = null
         private var hostnameVerifier: HostnameVerifier? = null
         private var dispatcher: okhttp3.Dispatcher? = null
+        private var connectionPool: okhttp3.ConnectionPool? = null
 
         fun proxy(proxy: Proxy?) = apply { this.proxy = proxy }
 
@@ -143,6 +144,50 @@ class OpenAIOkHttpClientAsync private constructor() {
         /** Alias for calling [Builder.dispatcher] with `dispatcher.orElse(null)`. */
         fun dispatcher(dispatcher: Optional<okhttp3.Dispatcher>) =
             dispatcher(dispatcher.getOrNull())
+
+        /**
+         * Sets a custom OkHttp ConnectionPool for managing HTTP connection reuse.
+         *
+         * The ConnectionPool controls connection pooling behavior, including the maximum number of
+         * idle connections and how long they are kept alive. If not set, a default optimized
+         * connection pool will be created based on the machine's CPU cores.
+         *
+         * **Important Notes:**
+         * - The custom connection pool will be used as-is. The SDK will NOT modify its
+         *   configuration.
+         * - You should manually configure `maxIdleConnections` and `keepAliveDuration` according to
+         *   your needs.
+         * - Recommended settings for OpenAI API:
+         *     - `maxIdleConnections`: 5-50 (based on expected concurrent usage)
+         *     - `keepAliveDuration`: 5 minutes (standard HTTP keep-alive duration)
+         * - The connection pool's lifecycle is managed by the OkHttpClient. When the client is
+         *   closed, all connections will be evicted.
+         * - Do not share the same ConnectionPool instance across multiple OkHttpClient instances.
+         *
+         * Example:
+         * ```kotlin
+         * val customConnectionPool = okhttp3.ConnectionPool(
+         *     maxIdleConnections = 20,
+         *     keepAliveDuration = 5,
+         *     timeUnit = TimeUnit.MINUTES
+         * )
+         * val client = OpenAIOkHttpClientAsync.builder()
+         *     .apiKey("your-api-key")
+         *     .connectionPool(customConnectionPool)
+         *     .build()
+         * ```
+         *
+         * @param connectionPool The custom connection pool to use, or null to use the optimized
+         *   default
+         * @see okhttp3.ConnectionPool
+         */
+        fun connectionPool(connectionPool: okhttp3.ConnectionPool?) = apply {
+            this.connectionPool = connectionPool
+        }
+
+        /** Alias for calling [Builder.connectionPool] with `connectionPool.orElse(null)`. */
+        fun connectionPool(connectionPool: Optional<okhttp3.ConnectionPool>) =
+            connectionPool(connectionPool.getOrNull())
 
         /**
          * Whether to throw an exception if any of the Jackson versions detected at runtime are
@@ -370,6 +415,7 @@ class OpenAIOkHttpClientAsync private constructor() {
                             .trustManager(trustManager)
                             .hostnameVerifier(hostnameVerifier)
                             .dispatcher(dispatcher)
+                            .connectionPool(connectionPool)
                             .build()
                     )
                     .build()
