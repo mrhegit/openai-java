@@ -2,8 +2,8 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.mrhegit/openai-java)](https://central.sonatype.com/artifact/io.github.mrhegit/openai-java/3.5.4)
-[![javadoc](https://javadoc.io/badge2/io.github.mrhegit/openai-java/3.5.4/javadoc.svg)](https://javadoc.io/doc/io.github.mrhegit/openai-java/3.5.4)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.mrhegit/openai-java)](https://central.sonatype.com/artifact/io.github.mrhegit/openai-java/3.5.5)
+[![javadoc](https://javadoc.io/badge2/io.github.mrhegit/openai-java/3.5.5/javadoc.svg)](https://javadoc.io/doc/io.github.mrhegit/openai-java/3.5.5)
 
 <!-- x-release-please-end -->
 
@@ -20,9 +20,110 @@ The OpenAI Java SDK provides convenient access to the [OpenAI REST API](https://
 
 <!-- x-release-please-start-version -->
 
-The REST API documentation can be found on [platform.openai.com](https://platform.openai.com/docs). Javadocs are available on [javadoc.io](https://javadoc.io/doc/io.github.mrhegit/openai-java/3.5.4).
+The REST API documentation can be found on [platform.openai.com](https://platform.openai.com/docs). Javadocs are available on [javadoc.io](https://javadoc.io/doc/io.github.mrhegit/openai-java/3.5.5).
 
 <!-- x-release-please-end -->
+
+## ✨ What's New in This Fork
+
+This fork includes several enhancements over the official SDK to provide more flexibility and control:
+
+### 🆕 Version 3.5.5 (Latest)
+- **Enhanced OkHttp Configuration**: Full control over HTTP client behavior
+  - Custom `Dispatcher` configuration for advanced thread pool management
+  - Custom `ConnectionPool` settings for optimized connection reuse
+  - Fine-grained control over concurrent requests and connection lifecycle
+
+### 📦 Version 3.5.4
+- **Custom Dispatcher Support**: Configure OkHttp's `Dispatcher` for better control over:
+  - Maximum concurrent requests (`maxRequests`)
+  - Maximum concurrent requests per host (`maxRequestsPerHost`)
+  - Custom `ExecutorService` for request execution
+
+- **Custom ConnectionPool Support**: Configure OkHttp's `ConnectionPool` for optimized performance:
+  - Maximum idle connections
+  - Connection keep-alive duration
+  - Better resource management in high-throughput scenarios
+
+### 💡 Why These Enhancements?
+
+**Better Performance Control**: Fine-tune HTTP client behavior for your specific use case
+- Adjust concurrency limits based on your application's needs
+- Optimize connection pooling for high-throughput scenarios
+- Implement custom thread pool strategies
+
+**Production-Ready Features**: Enterprise-grade configuration options
+- Custom executor services for better resource management
+- Connection pool tuning for long-running applications
+- Advanced retry and timeout strategies
+
+**Backward Compatible**: All enhancements are optional and fully backward compatible with the official SDK
+
+### 📖 Usage Examples
+
+#### Custom Dispatcher Configuration
+```java
+import okhttp3.Dispatcher;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+// Create custom dispatcher with specific limits
+Dispatcher dispatcher = new Dispatcher();
+dispatcher.setMaxRequests(100);  // Max concurrent requests
+dispatcher.setMaxRequestsPerHost(10);  // Max per host
+
+// Or use custom executor service
+ExecutorService executor = Executors.newFixedThreadPool(20);
+Dispatcher customDispatcher = new Dispatcher(executor);
+
+OpenAIOkHttpClient client = OpenAIOkHttpClient.builder()
+    .apiKey(System.getenv("OPENAI_API_KEY"))
+    .dispatcher(dispatcher)  // Apply custom dispatcher
+    .build();
+```
+
+#### Custom ConnectionPool Configuration
+```java
+import okhttp3.ConnectionPool;
+import java.util.concurrent.TimeUnit;
+
+// Create custom connection pool
+ConnectionPool connectionPool = new ConnectionPool(
+    10,                      // maxIdleConnections
+    5,                       // keepAliveDuration
+    TimeUnit.MINUTES         // timeUnit
+);
+
+OpenAIOkHttpClient client = OpenAIOkHttpClient.builder()
+    .apiKey(System.getenv("OPENAI_API_KEY"))
+    .connectionPool(connectionPool)  // Apply custom connection pool
+    .build();
+```
+
+#### Combined Configuration
+```java
+// Combine both for maximum control
+Dispatcher dispatcher = new Dispatcher();
+dispatcher.setMaxRequests(50);
+dispatcher.setMaxRequestsPerHost(5);
+
+ConnectionPool connectionPool = new ConnectionPool(
+    20,                      // More idle connections
+    10,                      // Longer keep-alive
+    TimeUnit.MINUTES
+);
+
+OpenAIOkHttpClient client = OpenAIOkHttpClient.builder()
+    .apiKey(System.getenv("OPENAI_API_KEY"))
+    .dispatcher(dispatcher)
+    .connectionPool(connectionPool)
+    .timeout(Duration.ofSeconds(60))
+    .build();
+```
+
+For more details on these enhancements, see the [FORK_CHANGES.md](FORK_CHANGES.md) documentation.
+
+---
 
 ## Installation
 
@@ -33,7 +134,7 @@ The REST API documentation can be found on [platform.openai.com](https://platfor
 ### Gradle
 
 ```kotlin
-implementation("io.github.mrhegit:openai-java:3.5.4")
+implementation("io.github.mrhegit:openai-java:3.5.5")
 ```
 
 ### Maven
@@ -42,7 +143,7 @@ implementation("io.github.mrhegit:openai-java:3.5.4")
 <dependency>
   <groupId>io.github.mrhegit</groupId>
   <artifactId>openai-java</artifactId>
-  <version>3.5.4</version>
+  <version>3.5.5</version>
 </dependency>
 ```
 
@@ -1351,7 +1452,7 @@ If you're using Spring Boot, then you can use the SDK's [Spring Boot starter](ht
 #### Gradle
 
 ```kotlin
-implementation("io.github.mrhegit:openai-java-spring-boot-starter:3.5.4")
+implementation("io.github.mrhegit:openai-java-spring-boot-starter:3.5.5")
 ```
 
 #### Maven
@@ -1360,7 +1461,7 @@ implementation("io.github.mrhegit:openai-java-spring-boot-starter:3.5.4")
 <dependency>
   <groupId>io.github.mrhegit</groupId>
   <artifactId>openai-java-spring-boot-starter</artifactId>
-  <version>3.5.4</version>
+  <version>3.5.5</version>
 </dependency>
 ```
 
