@@ -195,6 +195,7 @@ class OkHttpClient private constructor(private val okHttpClient: okhttp3.OkHttpC
         private var sslSocketFactory: SSLSocketFactory? = null
         private var trustManager: X509TrustManager? = null
         private var hostnameVerifier: HostnameVerifier? = null
+        private var dispatcher: okhttp3.Dispatcher? = null
 
         fun timeout(timeout: Timeout) = apply { this.timeout = timeout }
 
@@ -214,33 +215,89 @@ class OkHttpClient private constructor(private val okHttpClient: okhttp3.OkHttpC
             this.hostnameVerifier = hostnameVerifier
         }
 
-        fun build(): OkHttpClient =
-            OkHttpClient(
-                okhttp3.OkHttpClient.Builder()
-                    .connectTimeout(timeout.connect())
-                    .readTimeout(timeout.read())
-                    .writeTimeout(timeout.write())
-                    .callTimeout(timeout.request())
-                    .proxy(proxy)
-                    .apply {
-                        val sslSocketFactory = sslSocketFactory
-                        val trustManager = trustManager
-                        if (sslSocketFactory != null && trustManager != null) {
-                            sslSocketFactory(sslSocketFactory, trustManager)
-                        } else {
-                            check((sslSocketFactory != null) == (trustManager != null)) {
-                                "Both or none of `sslSocketFactory` and `trustManager` must be set, but only one was set"
-                            }
-                        }
+        /**
+         * Sets a custom OkHttp Dispatcher for managing HTTP call execution.
+         *
+         * The Dispatcher controls the maximum number of concurrent requests and requests per host.
+         * If not set, a default optimized dispatcher will be created based on the machine's CPU cores.
+         *
+         * **Important Notes:**
+         * - The custom dispatcher will be used as-is. The SDK will NOT modify its configuration.
+         * - You should manually configure `maxRequests` and `maxRequestsPerHost` according to your needs.
+         * - It's recommended to set `maxRequestsPerHost = maxRequests` for optimal performance when
+         *   making requests to the same host (which is typical for OpenAI API calls).
+         * - The dispatcher's lifecycle is managed by the OkHttpClient. When the client is closed,
+         *   the dispatcher's executor service will be automatically shut down.
+         * - Do not share the same Dispatcher instance across multiple OkHttpClient instances.
+         *
+         * Example:
+         * ```kotlin
+         * val customDispatcher = okhttp3.Dispatcher().apply {
+         *     maxRequests = 100
+         *     maxRequestsPerHost = 100  // Recommended: same as maxRequests
+         * }
+         * val client = OkHttpClient.builder()
+         *     .dispatcher(customDispatcher)
+         *     .build()
+         * ```
+         *
+         * @param dispatcher The custom dispatcher to use, or null to use the optimized default
+         * @see okhttp3.Dispatcher
+         */
+        fun dispatcher(dispatcher: okhttp3.Dispatcher?) = apply {
+            this.dispatcher = dispatcher
+        }
 
-                        hostnameVerifier?.let(::hostnameVerifier)
+        /**
+         * Creates an optimized Dispatcher with maxRequests calculated based on machine hardware.
+         *
+         * The calculation logic:
+         * - Base value: 64 (reasonable default for most scenarios)
+         * - CPU-based value: CPU cores * 8
+         * - Final value: max(base value, CPU-based value)
+         *
+         * This ensures good performance on both low-end and high-end machines while maintaining
+         * a reasonable minimum threshold.
+         */
+        private fun createOptimizedDispatcher(): okhttp3.Dispatcher {
+            val cpuCores = Runtime.getRuntime().availableProcessors()
+            val baselineMaxRequests = 64
+            val maxRequests = maxOf(baselineMaxRequests, cpuCores * 8)
+
+            return okhttp3.Dispatcher().apply {
+                this.maxRequests = maxRequests
+                // We usually make all our requests to the same host so it makes sense to
+                // raise the per-host limit to match the overall limit.
+                this.maxRequestsPerHost = maxRequests
+            }
+        }
+
+        fun build(): OkHttpClient {
+            val okHttpClientBuilder = okhttp3.OkHttpClient.Builder()
+                .connectTimeout(timeout.connect())
+                .readTimeout(timeout.read())
+                .writeTimeout(timeout.write())
+                .callTimeout(timeout.request())
+                .proxy(proxy)
+                .apply {
+                    val sslSocketFactory = sslSocketFactory
+                    val trustManager = trustManager
+                    if (sslSocketFactory != null && trustManager != null) {
+                        sslSocketFactory(sslSocketFactory, trustManager)
+                    } else {
+                        check((sslSocketFactory != null) == (trustManager != null)) {
+                            "Both or none of `sslSocketFactory` and `trustManager` must be set, but only one was set"
+                        }
                     }
-                    .build()
-                    .apply {
-                        // We usually make all our requests to the same host so it makes sense to
-                        // raise the per-host limit to the overall limit.
-                        dispatcher.maxRequestsPerHost = dispatcher.maxRequests
-                    }
-            )
+
+                    hostnameVerifier?.let(::hostnameVerifier)
+
+                    // Use custom dispatcher if provided, otherwise create an optimized one
+                    val dispatcherToUse = dispatcher ?: createOptimizedDispatcher()
+                    dispatcher(dispatcherToUse)
+                }
+
+            return OkHttpClient(okHttpClientBuilder.build())
+        }
     }
 }

@@ -3,7 +3,7 @@
 本文档记录了将 `openai/openai-java` fork 为 `mrhegit/openai-java` 并配置 Maven Central 发布所做的所有修改。
 
 ## 修改日期
-2025-01-15
+2025-10-05
 
 ## Maven 坐标变更
 
@@ -17,7 +17,7 @@
 - **Version:** `3.5.3-beta.1`
 - **仓库:** `mrhegit/openai-java`
 
-## 修改文件清单（共 14 个文件）
+## 修改文件清单（共 18 个文件）
 
 ### 1. build.gradle.kts
 **修改内容：**
@@ -361,6 +361,39 @@ fi
 
 ---
 
+### 15. .github/workflows/create-releases.yml (禁用自动 release)
+**修改内容：**
+- ✅ 禁用自动 release 功能
+- ✅ 改为手动发布模式
+
+**修改位置：** 第 8-14 行
+
+**原配置：**
+```yaml
+jobs:
+  release:
+    name: release
+    if: github.ref == 'refs/heads/custom-dev' && github.repository == 'mrhegit/openai-java'
+```
+
+**新配置：**
+```yaml
+jobs:
+  release:
+    name: release
+    # Disabled - manual release only
+    # To enable: change 'if: false' to the condition below
+    # if: github.ref == 'refs/heads/custom-dev' && github.repository == 'mrhegit/openai-java'
+    if: false
+```
+
+**说明：**
+- 推送到 custom-dev 分支不会自动创建 Release PR
+- 需要手动控制发布流程
+- 详见 `MANUAL_RELEASE_GUIDE.md`
+
+---
+
 ## 发布前检查清单
 
 ### Sonatype 配置
@@ -481,15 +514,143 @@ git push origin main
 
 ## 修改完成确认
 
-✅ 所有配置文件已修改完成（共 14 个文件）
+✅ 所有配置文件已修改完成（共 18 个文件）
 ✅ Maven 坐标已更新为 `io.github.mrhegit:openai-java:3.5.3-beta.1`
 ✅ POM 元数据已更新为 fork 信息
 ✅ GitHub Actions 工作流已更新仓库检查（4 个工作流）
 ✅ CI examples job 已禁用（避免需要真实 API 密钥）
 ✅ Release Please 已迁移到标准版本（移除 Stainless API 依赖）
 ✅ 发布环境检查脚本已移除 Stainless API 检查
+✅ 自动 release 已禁用（改为手动发布模式）
 ✅ README 和 CONTRIBUTING 安装说明已更新
 ✅ release-please 版本清单已同步
+✅ 新增自定义 OkHttp Dispatcher 配置功能（3 个文件）
 
-**下一步：** 配置 GitHub Secrets 并执行首次发布
+**下一步：** 配置 GitHub Secrets 并按照 `MANUAL_RELEASE_GUIDE.md` 进行手动发布
+
+---
+
+## 功能增强
+
+### 16. 支持自定义 OkHttp Dispatcher 配置
+
+**修改日期：** 2025-10-05
+
+**修改文件：**
+- `openai-java-client-okhttp/src/main/kotlin/com/openai/client/okhttp/OkHttpClient.kt`
+- `openai-java-client-okhttp/src/main/kotlin/com/openai/client/okhttp/OpenAIOkHttpClient.kt`
+- `openai-java-client-okhttp/src/main/kotlin/com/openai/client/okhttp/OpenAIOkHttpClientAsync.kt`
+
+**功能描述：**
+
+新增了 `dispatcher()` 方法，允许用户自定义 OkHttp Dispatcher 配置，以优化并发请求性能。
+
+**核心特性：**
+
+1. **自定义 Dispatcher 支持**
+   - 用户可以传入自定义的 `okhttp3.Dispatcher` 对象
+   - SDK 会原样使用自定义 Dispatcher，不会修改其任何配置
+   - 用户需要手动配置 `maxRequests` 和 `maxRequestsPerHost` 参数
+
+2. **智能默认 Dispatcher**
+   - 当用户未提供自定义 Dispatcher 时，SDK 自动创建优化的默认配置
+   - 基于机器 CPU 核心数动态计算 `maxRequests` 参数
+   - 计算逻辑：`maxRequests = max(64, CPU核心数 × 8)`
+   - `maxRequestsPerHost` 自动与 `maxRequests` 保持一致
+
+3. **向后兼容性**
+   - 这是可选功能，不会破坏现有 API
+   - 未提供自定义 Dispatcher 时，自动使用优化的默认配置
+   - 现有代码无需修改即可享受性能优化
+
+**使用示例：**
+
+#### 使用默认优化的 Dispatcher（推荐）
+```kotlin
+val client = OpenAIOkHttpClient.builder()
+    .apiKey("your-api-key")
+    .build()
+
+// 自动使用优化的 Dispatcher：
+// - maxRequests = max(64, CPU核心数 × 8)
+// - maxRequestsPerHost = maxRequests
+```
+
+#### 使用自定义 Dispatcher
+```kotlin
+val customDispatcher = okhttp3.Dispatcher().apply {
+    maxRequests = 100
+    maxRequestsPerHost = 100  // 建议与 maxRequests 保持一致
+}
+
+val client = OpenAIOkHttpClient.builder()
+    .apiKey("your-api-key")
+    .dispatcher(customDispatcher)
+    .build()
+```
+
+#### 异步客户端使用方式
+```kotlin
+val client = OpenAIOkHttpClientAsync.builder()
+    .apiKey("your-api-key")
+    .dispatcher(customDispatcher)  // 可选
+    .build()
+```
+
+**重要说明：**
+
+⚠️ **自定义 Dispatcher 注意事项：**
+- SDK 不会修改自定义 Dispatcher 的配置，完全按原样使用
+- 用户需要手动配置 `maxRequests` 和 `maxRequestsPerHost`
+- 建议将 `maxRequestsPerHost` 设置为与 `maxRequests` 相同（OpenAI API 通常请求同一主机）
+- Dispatcher 的生命周期由 OkHttpClient 管理，调用 `close()` 时会自动关闭
+- 不要在多个 OkHttpClient 实例间共享同一个 Dispatcher 对象
+
+📊 **性能优化效果：**
+- 在 8 核 CPU 机器上，默认 `maxRequests` 从 64 提升到 64（8 × 8 = 64，取最大值）
+- 在 16 核 CPU 机器上，默认 `maxRequests` 从 64 提升到 128（16 × 8 = 128）
+- 在 32 核 CPU 机器上，默认 `maxRequests` 从 64 提升到 256（32 × 8 = 256）
+- 确保在高性能服务器上能够充分利用硬件资源
+
+**技术实现：**
+
+在 `OkHttpClient.Builder` 中添加了：
+```kotlin
+private var dispatcher: okhttp3.Dispatcher? = null
+
+fun dispatcher(dispatcher: okhttp3.Dispatcher?) = apply {
+    this.dispatcher = dispatcher
+}
+
+private fun createOptimizedDispatcher(): okhttp3.Dispatcher {
+    val cpuCores = Runtime.getRuntime().availableProcessors()
+    val baselineMaxRequests = 64
+    val maxRequests = maxOf(baselineMaxRequests, cpuCores * 8)
+
+    return okhttp3.Dispatcher().apply {
+        this.maxRequests = maxRequests
+        this.maxRequestsPerHost = maxRequests
+    }
+}
+```
+
+在 `OpenAIOkHttpClient.Builder` 和 `OpenAIOkHttpClientAsync.Builder` 中添加了：
+```kotlin
+private var dispatcher: okhttp3.Dispatcher? = null
+
+fun dispatcher(dispatcher: okhttp3.Dispatcher?) = apply {
+    this.dispatcher = dispatcher
+}
+
+fun dispatcher(dispatcher: Optional<okhttp3.Dispatcher>) =
+    dispatcher(dispatcher.getOrNull())
+```
+
+**文档完善：**
+- 所有 `dispatcher()` 方法都包含详细的 KDoc 注释
+- 明确说明 SDK 不会修改自定义 Dispatcher 的配置
+- 提供完整的使用示例和最佳实践建议
+- 说明生命周期管理和使用限制
+
+---
 

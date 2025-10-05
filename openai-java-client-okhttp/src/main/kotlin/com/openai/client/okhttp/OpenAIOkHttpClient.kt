@@ -51,6 +51,7 @@ class OpenAIOkHttpClient private constructor() {
         private var sslSocketFactory: SSLSocketFactory? = null
         private var trustManager: X509TrustManager? = null
         private var hostnameVerifier: HostnameVerifier? = null
+        private var dispatcher: okhttp3.Dispatcher? = null
 
         fun proxy(proxy: Proxy?) = apply { this.proxy = proxy }
 
@@ -104,6 +105,44 @@ class OpenAIOkHttpClient private constructor() {
         /** Alias for calling [Builder.hostnameVerifier] with `hostnameVerifier.orElse(null)`. */
         fun hostnameVerifier(hostnameVerifier: Optional<HostnameVerifier>) =
             hostnameVerifier(hostnameVerifier.getOrNull())
+
+        /**
+         * Sets a custom OkHttp Dispatcher for managing HTTP call execution.
+         *
+         * The Dispatcher controls the maximum number of concurrent requests and requests per host.
+         * If not set, a default optimized dispatcher will be created based on the machine's CPU cores.
+         *
+         * **Important Notes:**
+         * - The custom dispatcher will be used as-is. The SDK will NOT modify its configuration.
+         * - You should manually configure `maxRequests` and `maxRequestsPerHost` according to your needs.
+         * - It's recommended to set `maxRequestsPerHost = maxRequests` for optimal performance when
+         *   making requests to the same host (which is typical for OpenAI API calls).
+         * - The dispatcher's lifecycle is managed by the OkHttpClient. When the client is closed,
+         *   the dispatcher's executor service will be automatically shut down.
+         * - Do not share the same Dispatcher instance across multiple OkHttpClient instances.
+         *
+         * Example:
+         * ```kotlin
+         * val customDispatcher = okhttp3.Dispatcher().apply {
+         *     maxRequests = 100
+         *     maxRequestsPerHost = 100  // Recommended: same as maxRequests
+         * }
+         * val client = OpenAIOkHttpClient.builder()
+         *     .apiKey("your-api-key")
+         *     .dispatcher(customDispatcher)
+         *     .build()
+         * ```
+         *
+         * @param dispatcher The custom dispatcher to use, or null to use the optimized default
+         * @see okhttp3.Dispatcher
+         */
+        fun dispatcher(dispatcher: okhttp3.Dispatcher?) = apply {
+            this.dispatcher = dispatcher
+        }
+
+        /** Alias for calling [Builder.dispatcher] with `dispatcher.orElse(null)`. */
+        fun dispatcher(dispatcher: Optional<okhttp3.Dispatcher>) =
+            dispatcher(dispatcher.getOrNull())
 
         /**
          * Whether to throw an exception if any of the Jackson versions detected at runtime are
@@ -330,6 +369,7 @@ class OpenAIOkHttpClient private constructor() {
                             .sslSocketFactory(sslSocketFactory)
                             .trustManager(trustManager)
                             .hostnameVerifier(hostnameVerifier)
+                            .dispatcher(dispatcher)
                             .build()
                     )
                     .build()
