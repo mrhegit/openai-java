@@ -17,7 +17,7 @@
 - **Version:** `1.0.0`
 - **仓库:** `mrhegit/openai-java`
 
-## 修改文件清单（共 11 个文件）
+## 修改文件清单（共 14 个文件）
 
 ### 1. build.gradle.kts
 **修改内容：**
@@ -323,6 +323,44 @@ implementation("io.github.mrhegit:openai-java:1.0.0")
 
 ---
 
+### 13. .github/workflows/release-doctor.yml (移除 Stainless API)
+**修改内容：**
+- ✅ 移除 STAINLESS_API_KEY 环境变量
+
+**修改位置：** 第 18-26 行
+
+**说明：**
+- release-doctor 工作流调用 `bin/check-release-environment` 脚本
+- 移除了对 STAINLESS_API_KEY 的检查
+
+---
+
+### 14. bin/check-release-environment (移除 Stainless API 检查)
+**修改内容：**
+- ✅ 移除 STAINLESS_API_KEY 检查逻辑
+
+**修改位置：** 第 5-7 行
+
+**原代码：**
+```bash
+if [ -z "${STAINLESS_API_KEY}" ]; then
+  errors+=("The STAINLESS_API_KEY secret has not been set...")
+fi
+```
+
+**新代码：**
+```bash
+# STAINLESS_API_KEY check removed - fork project uses standard release-please
+# instead of Stainless API
+```
+
+**说明：**
+- 这个脚本用于发布前环境检查
+- 移除了对 Stainless API 密钥的检查
+- 保留了对 Sonatype 和 GPG 密钥的检查
+
+---
+
 ## 发布前检查清单
 
 ### Sonatype 配置
@@ -443,12 +481,13 @@ git push origin main
 
 ## 修改完成确认
 
-✅ 所有配置文件已修改完成（共 12 个文件）
+✅ 所有配置文件已修改完成（共 14 个文件）
 ✅ Maven 坐标已更新为 `io.github.mrhegit:openai-java:1.0.0`
 ✅ POM 元数据已更新为 fork 信息
 ✅ GitHub Actions 工作流已更新仓库检查（4 个工作流）
 ✅ CI examples job 已禁用（避免需要真实 API 密钥）
 ✅ Release Please 已迁移到标准版本（移除 Stainless API 依赖）
+✅ 发布环境检查脚本已移除 Stainless API 检查
 ✅ README 和 CONTRIBUTING 安装说明已更新
 ✅ release-please 版本清单已同步
 
