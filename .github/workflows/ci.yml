@@ -87,7 +87,10 @@ jobs:
     timeout-minutes: 10
     name: examples
     runs-on: ${{ github.repository == 'stainless-sdks/openai-java' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
-    if: github.repository == 'mrhegit/openai-java' && (github.event_name == 'push' || github.event.pull_request.head.repo.fork)
+    # Disabled for fork: requires real OPENAI_API_KEY which incurs API costs
+    # To enable: add OPENAI_API_KEY to GitHub Secrets and change 'if: false' to the condition below
+    # if: github.repository == 'mrhegit/openai-java' && (github.event_name == 'push' || github.event.pull_request.head.repo.fork)
+    if: false
 
     steps:
       - uses: actions/checkout@v4

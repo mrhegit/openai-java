@@ -17,7 +17,7 @@
 - **Version:** `1.0.0`
 - **仓库:** `mrhegit/openai-java`
 
-## 修改文件清单（共 9 个文件）
+## 修改文件清单（共 9 个文件 + 1 个 CI 优化）
 
 ### 1. build.gradle.kts
 **修改内容：**
@@ -130,7 +130,32 @@ if: github.repository == 'mrhegit/openai-java'
 
 ---
 
-### 7. README.md
+### 7. .github/workflows/ci.yml (CI 优化)
+**修改内容：**
+- ✅ 禁用 examples job（避免需要真实 OPENAI_API_KEY）
+
+**修改位置：** 第 86-93 行
+
+```yaml
+examples:
+  timeout-minutes: 10
+  name: examples
+  runs-on: ${{ github.repository == 'stainless-sdks/openai-java' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
+  # Disabled for fork: requires real OPENAI_API_KEY which incurs API costs
+  # To enable: add OPENAI_API_KEY to GitHub Secrets and change 'if: false' to the condition below
+  # if: github.repository == 'mrhegit/openai-java' && (github.event_name == 'push' || github.event.pull_request.head.repo.fork)
+  if: false
+```
+
+**说明：**
+- examples job 需要真实的 OpenAI API 密钥才能运行
+- 运行会产生 API 调用费用
+- Fork 项目主要关注构建和发布，不需要运行真实 API 示例
+- 如需启用，参考 `CI_EXAMPLES_JOB_SOLUTIONS.md` 文档
+
+---
+
+### 8. README.md
 **修改内容：**
 - ✅ 标题添加 Fork 标识
 - ✅ 添加 Fork 说明 NOTE 块
@@ -189,7 +214,7 @@ implementation("io.github.mrhegit:openai-java-spring-boot-starter:1.0.0")
 
 ---
 
-### 8. .release-please-manifest.json
+### 9. .release-please-manifest.json
 **修改内容：**
 - ✅ 版本号从 `3.5.3` 改为 `1.0.0`
 
@@ -205,7 +230,7 @@ implementation("io.github.mrhegit:openai-java-spring-boot-starter:1.0.0")
 
 ---
 
-### 9. CONTRIBUTING.md
+### 10. CONTRIBUTING.md
 **修改内容：**
 - ✅ 本地发布示例中的 Maven 坐标更新
 
@@ -347,10 +372,11 @@ git push origin main
 
 ## 修改完成确认
 
-✅ 所有配置文件已修改完成（共 9 个文件）
+✅ 所有配置文件已修改完成（共 10 个文件）
 ✅ Maven 坐标已更新为 `io.github.mrhegit:openai-java:1.0.0`
 ✅ POM 元数据已更新为 fork 信息
 ✅ GitHub Actions 工作流已更新仓库检查（4 个工作流）
+✅ CI examples job 已禁用（避免需要真实 API 密钥）
 ✅ README 和 CONTRIBUTING 安装说明已更新
 ✅ release-please 版本清单已同步
 

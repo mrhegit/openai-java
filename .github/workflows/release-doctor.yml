@@ -2,7 +2,7 @@ name: Release Doctor
 on:
   push:
     branches:
-      - main
+      - custom-dev
   workflow_dispatch:
 
 jobs:
