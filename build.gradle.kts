@@ -8,7 +8,7 @@ repositories {
 
 allprojects {
     group = "io.github.mrhegit"
-    version = "3.5.3-beta.1" // x-release-please-version
+    version = "3.5.4" // x-release-please-version
 }
 
 subprojects {

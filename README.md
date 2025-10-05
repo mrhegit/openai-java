@@ -2,8 +2,8 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.mrhegit/openai-java)](https://central.sonatype.com/artifact/io.github.mrhegit/openai-java/3.5.3-beta.1)
-[![javadoc](https://javadoc.io/badge2/io.github.mrhegit/openai-java/3.5.3-beta.1/javadoc.svg)](https://javadoc.io/doc/io.github.mrhegit/openai-java/3.5.3-beta.1)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.mrhegit/openai-java)](https://central.sonatype.com/artifact/io.github.mrhegit/openai-java/3.5.4)
+[![javadoc](https://javadoc.io/badge2/io.github.mrhegit/openai-java/3.5.4/javadoc.svg)](https://javadoc.io/doc/io.github.mrhegit/openai-java/3.5.4)
 
 <!-- x-release-please-end -->
 
@@ -20,7 +20,7 @@ The OpenAI Java SDK provides convenient access to the [OpenAI REST API](https://
 
 <!-- x-release-please-start-version -->
 
-The REST API documentation can be found on [platform.openai.com](https://platform.openai.com/docs). Javadocs are available on [javadoc.io](https://javadoc.io/doc/io.github.mrhegit/openai-java/3.5.3-beta.1).
+The REST API documentation can be found on [platform.openai.com](https://platform.openai.com/docs). Javadocs are available on [javadoc.io](https://javadoc.io/doc/io.github.mrhegit/openai-java/3.5.4).
 
 <!-- x-release-please-end -->
 
@@ -33,7 +33,7 @@ The REST API documentation can be found on [platform.openai.com](https://platfor
 ### Gradle
 
 ```kotlin
-implementation("io.github.mrhegit:openai-java:3.5.3-beta.1")
+implementation("io.github.mrhegit:openai-java:3.5.4")
 ```
 
 ### Maven
@@ -42,7 +42,7 @@ implementation("io.github.mrhegit:openai-java:3.5.3-beta.1")
 <dependency>
   <groupId>io.github.mrhegit</groupId>
   <artifactId>openai-java</artifactId>
-  <version>3.5.3-beta.1</version>
+  <version>3.5.4</version>
 </dependency>
 ```
 
@@ -1351,7 +1351,7 @@ If you're using Spring Boot, then you can use the SDK's [Spring Boot starter](ht
 #### Gradle
 
 ```kotlin
-implementation("io.github.mrhegit:openai-java-spring-boot-starter:3.5.3-beta.1")
+implementation("io.github.mrhegit:openai-java-spring-boot-starter:3.5.4")
 ```
 
 #### Maven
@@ -1360,7 +1360,7 @@ implementation("io.github.mrhegit:openai-java-spring-boot-starter:3.5.3-beta.1")
 <dependency>
   <groupId>io.github.mrhegit</groupId>
   <artifactId>openai-java-spring-boot-starter</artifactId>
-  <version>3.5.3-beta.1</version>
+  <version>3.5.4</version>
 </dependency>
 ```
 
