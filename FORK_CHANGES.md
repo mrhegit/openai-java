@@ -14,7 +14,7 @@
 
 ### 新坐标
 - **GroupId:** `io.github.mrhegit`
-- **Version:** `1.0.0`
+- **Version:** `3.5.3-beta.1`
 - **仓库:** `mrhegit/openai-java`
 
 ## 修改文件清单（共 14 个文件）
@@ -22,14 +22,14 @@
 ### 1. build.gradle.kts
 **修改内容：**
 - ✅ `group = "io.github.mrhegit"` (原: `com.openai`)
-- ✅ `version = "1.0.0"` (原: `3.5.3`)
+- ✅ `version = "3.5.3-beta.1"` (原: `3.5.3`)
 
 **修改位置：** 第 10-11 行
 
 ```kotlin
 allprojects {
     group = "io.github.mrhegit"
-    version = "1.0.0" // x-release-please-version
+    version = "3.5.3-beta.1" // x-release-please-version
 }
 ```
 
@@ -216,13 +216,13 @@ implementation("io.github.mrhegit:openai-java-spring-boot-starter:1.0.0")
 
 ### 9. .release-please-manifest.json
 **修改内容：**
-- ✅ 版本号从 `3.5.3` 改为 `1.0.0`
+- ✅ 版本号从 `3.5.3` 改为 `3.5.3-beta.1`
 
 **修改位置：** 第 2 行
 
 ```json
 {
-  ".": "1.0.0"
+  ".": "3.5.3-beta.1"
 }
 ```
 
@@ -238,7 +238,7 @@ implementation("io.github.mrhegit:openai-java-spring-boot-starter:1.0.0")
 
 #### Gradle 示例
 ```kotlin
-implementation("io.github.mrhegit:openai-java:1.0.0")
+implementation("io.github.mrhegit:openai-java:3.5.3-beta.1")
 ```
 
 #### Maven 示例
@@ -246,7 +246,7 @@ implementation("io.github.mrhegit:openai-java:1.0.0")
 <dependency>
   <groupId>io.github.mrhegit</groupId>
   <artifactId>openai-java</artifactId>
-  <version>1.0.0</version>
+  <version>3.5.3-beta.1</version>
 </dependency>
 ```
 
@@ -482,7 +482,7 @@ git push origin main
 ## 修改完成确认
 
 ✅ 所有配置文件已修改完成（共 14 个文件）
-✅ Maven 坐标已更新为 `io.github.mrhegit:openai-java:1.0.0`
+✅ Maven 坐标已更新为 `io.github.mrhegit:openai-java:3.5.3-beta.1`
 ✅ POM 元数据已更新为 fork 信息
 ✅ GitHub Actions 工作流已更新仓库检查（4 个工作流）
 ✅ CI examples job 已禁用（避免需要真实 API 密钥）

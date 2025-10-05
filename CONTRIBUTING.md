@@ -62,14 +62,14 @@ Then in your project's `build.gradle.kts` or `pom.xml`, reference the locally pu
 <!-- x-release-please-start-version -->
 
 ```kotlin
-implementation("io.github.mrhegit:openai-java:1.0.0")
+implementation("io.github.mrhegit:openai-java:3.5.3-beta.1")
 ```
 
 ```xml
 <dependency>
   <groupId>io.github.mrhegit</groupId>
   <artifactId>openai-java</artifactId>
-  <version>1.0.0</version>
+  <version>3.5.3-beta.1</version>
 </dependency>
 ```
 
