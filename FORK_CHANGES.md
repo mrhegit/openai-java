@@ -17,7 +17,7 @@
 - **Version:** `1.0.0`
 - **仓库:** `mrhegit/openai-java`
 
-## 修改文件清单（共 9 个文件 + 1 个 CI 优化）
+## 修改文件清单（共 11 个文件）
 
 ### 1. build.gradle.kts
 **修改内容：**
@@ -252,6 +252,77 @@ implementation("io.github.mrhegit:openai-java:1.0.0")
 
 ---
 
+### 11. .github/workflows/create-releases.yml (Release Please 迁移)
+**修改内容：**
+- ✅ 替换 Stainless API action 为标准 release-please
+- ✅ 移除 STAINLESS_API_KEY 依赖
+- ✅ 调整触发条件（custom-dev 分支 + 手动触发）
+
+**修改位置：** 第 1-26 行
+
+**原配置（Stainless 版本）：**
+```yaml
+- uses: stainless-api/trigger-release-please@v1
+  id: release
+  with:
+    repo: ${{ github.event.repository.full_name }}
+    stainless-api-key: ${{ secrets.STAINLESS_API_KEY }}
+```
+
+**新配置（标准版本）：**
+```yaml
+- uses: actions/checkout@v4
+  with:
+    fetch-depth: 0  # Required for release-please to analyze commit history
+
+- uses: googleapis/release-please-action@v4
+  id: release
+  with:
+    token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+**说明：**
+- Stainless API 是官方团队使用的商业 SDK 生成平台
+- Fork 项目无法获取 STAINLESS_API_KEY
+- 使用标准 release-please 实现相同的自动化发布功能
+- 详见 `STAINLESS_API_MIGRATION.md` 文档
+
+---
+
+### 12. release-please-config.json (兼容标准 release-please)
+**修改内容：**
+- ✅ 更改 schema 为标准 release-please
+- ✅ 移除 Stainless 特有配置（prerelease、versioning）
+- ✅ 调整配置结构以兼容标准版本
+
+**修改位置：** 第 1-17 行
+
+**关键变更：**
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "packages": {
+    ".": {
+      "release-type": "simple",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": false,
+      "extra-files": [
+        "README.md",
+        "build.gradle.kts"
+      ]
+    }
+  },
+  ...
+}
+```
+
+**说明：**
+- 移除了 `versioning: "prerelease"` 和 `prerelease: true`
+- 将 `release-type` 和 `extra-files` 移到 packages 配置内
+- 保留兼容的 changelog-sections 配置
+
+---
+
 ## 发布前检查清单
 
 ### Sonatype 配置
@@ -372,11 +443,12 @@ git push origin main
 
 ## 修改完成确认
 
-✅ 所有配置文件已修改完成（共 10 个文件）
+✅ 所有配置文件已修改完成（共 12 个文件）
 ✅ Maven 坐标已更新为 `io.github.mrhegit:openai-java:1.0.0`
 ✅ POM 元数据已更新为 fork 信息
 ✅ GitHub Actions 工作流已更新仓库检查（4 个工作流）
 ✅ CI examples job 已禁用（避免需要真实 API 密钥）
+✅ Release Please 已迁移到标准版本（移除 Stainless API 依赖）
 ✅ README 和 CONTRIBUTING 安装说明已更新
 ✅ release-please 版本清单已同步
 

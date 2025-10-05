@@ -1,10 +1,9 @@
 name: Create releases
 on:
-  schedule:
-    - cron: '0 5 * * *' # every day at 5am UTC
   push:
     branches:
       - custom-dev
+  workflow_dispatch:  # Allow manual triggering
 
 jobs:
   release:
@@ -15,12 +14,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for release-please to analyze commit history
 
-      - uses: stainless-api/trigger-release-please@v1
+      - uses: googleapis/release-please-action@v4
         id: release
         with:
-          repo: ${{ github.event.repository.full_name }}
-          stainless-api-key: ${{ secrets.STAINLESS_API_KEY }}
+          # Release-please will use the config from release-please-config.json
+          # and .release-please-manifest.json
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Java
         if: ${{ steps.release.outputs.releases_created }}

@@ -1,14 +1,18 @@
 {
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "packages": {
-    ".": {}
+    ".": {
+      "release-type": "simple",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": false,
+      "extra-files": [
+        "README.md",
+        "build.gradle.kts"
+      ]
+    }
   },
-  "$schema": "https://raw.githubusercontent.com/stainless-api/release-please/main/schemas/config.json",
   "include-v-in-tag": true,
   "include-component-in-tag": false,
-  "versioning": "prerelease",
-  "prerelease": true,
-  "bump-minor-pre-major": true,
-  "bump-patch-for-minor-pre-major": false,
   "pull-request-header": "Automated Release PR",
   "pull-request-title-pattern": "release: ${version}",
   "changelog-sections": [
@@ -58,10 +62,5 @@
       "section": "Continuous Integration",
       "hidden": true
     }
-  ],
-  "release-type": "simple",
-  "extra-files": [
-    "README.md",
-    "build.gradle.kts"
   ]
 }
